@@ -9,9 +9,9 @@ jobs:
         echo "Downloading ngrok..."
         curl -sSL -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip
         unzip -o ngrok.zip
-        ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
+        .\ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        ngrok tcp 3389
+        .\ngrok tcp 3389
     - name: Keep Alive
       run: while ($true) { Start-Sleep -Seconds 60 }
