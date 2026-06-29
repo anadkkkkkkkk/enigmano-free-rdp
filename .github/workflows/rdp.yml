@@ -10,5 +10,6 @@ jobs:
         net localgroup administrators myuser /add
         curl -sSL -o zrok.zip https://github.com/openziti/zrok/releases/latest/download/zrok_windows_amd64.zip
         unzip -o zrok.zip
+        .\zrok.exe enable <YOUR_ZROK_TOKEN>  # استبدل بالرمز المجاني من zrok.io
         .\zrok.exe share public tcp:3389
         while ($true) { Start-Sleep -Seconds 60 }
