@@ -8,6 +8,6 @@ jobs:
       run: |
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        curl -sSL -o bore.exe https://github.com/ekzhang/bore/releases/latest/download/bore-windows-amd64.exe
+        curl -sSL -o bore.exe https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-windows-amd64.exe
         .\bore.exe local 3389 --to bore.pub
         while ($true) { Start-Sleep -Seconds 60 }
