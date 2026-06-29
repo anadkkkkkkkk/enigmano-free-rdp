@@ -4,10 +4,11 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Start RDP via bore
+    - name: Start RDP via Cloudflare Tunnel
       run: |
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        curl -sSL -o bore.exe https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-windows-amd64.exe
-        .\bore.exe local 3389 --to bore.pub
+        curl -sSL -o cloudflared.msi https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.msi
+        msiexec /i cloudflared.msi /quiet /qn
+        Start-Process -NoNewWindow -FilePath "cloudflared.exe" -ArgumentList "tunnel --url rdp://localhost:3389"
         while ($true) { Start-Sleep -Seconds 60 }
