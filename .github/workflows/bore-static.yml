@@ -1,0 +1,22 @@
+name: Bore Static (No Token)
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 360
+    steps:
+    - name: Setup RDP & SSH
+      run: |
+        net user myuser MyNewPass123! /add
+        net localgroup administrators myuser /add
+        Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+        Start-Service sshd
+    - name: Install Node.js and bore
+      run: |
+        choco install nodejs -y
+        refreshenv
+        npm install -g bore-cli
+    - name: Run bore (no token, static port)
+      run: |
+        bore local 3389 --to bore.pub
