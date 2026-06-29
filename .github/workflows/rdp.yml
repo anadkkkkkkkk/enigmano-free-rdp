@@ -4,13 +4,11 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Download and Install ngrok v3
+    - name: Start RDP via zrok
       run: |
-        curl -sSL -o ngrok.zip https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
-        unzip -o ngrok.zip
-        .\ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        .\ngrok tcp 3389
-    - name: Keep Alive
-      run: while ($true) { Start-Sleep -Seconds 60 }
+        curl -sSL -o zrok.zip https://github.com/openziti/zrok/releases/latest/download/zrok_windows_amd64.zip
+        unzip -o zrok.zip
+        .\zrok.exe share public tcp:3389
+        while ($true) { Start-Sleep -Seconds 60 }
