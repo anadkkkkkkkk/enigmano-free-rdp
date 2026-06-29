@@ -1,13 +1,14 @@
-name: RDP
+name: RDP 6-Hours (No Card, No Signup)
 on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Start RDP via Bore (no signup, no card)
+    - name: Start RDP via Bore
       run: |
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
         curl -sSL -o bore.exe https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-windows-amd64.exe
+        if (-Not (Test-Path bore.exe)) { Invoke-WebRequest -Uri https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-windows-amd64.exe -OutFile bore.exe }
         .\bore.exe local 3389 --to bore.pub
-        while ($true) { Start-Sleep -Seconds 60 }
+        while ($true) { Start-Sleep -Seconds 600 }
