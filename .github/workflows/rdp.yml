@@ -6,13 +6,12 @@ jobs:
     steps:
     - name: Start RDP
       run: |
-        echo "Starting RDP..."
-        curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | gpg --dearmor -o ngrok.gpg
-        echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | tee /etc/apt/sources.list.d/ngrok.list
-        apt update && apt install ngrok -y
+        echo "Downloading ngrok..."
+        curl -sSL -o ngrok.zip https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-windows-amd64.zip
+        unzip -o ngrok.zip
         ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
         ngrok tcp 3389
     - name: Keep Alive
-      run: while true; do sleep 60; done
+      run: while ($true) { Start-Sleep -Seconds 60 }
