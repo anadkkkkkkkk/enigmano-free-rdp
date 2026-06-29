@@ -47,16 +47,9 @@ jobs:
         Write-Host "Username: runneradmin" -ForegroundColor Yellow
         Write-Host "Password: P@ssw0rd!" -ForegroundColor Yellow
         
-    - name: Download and Setup ngrok
       run: |
-        Write-Host "Downloading ngrok..." -ForegroundColor Green
-        Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip" -OutFile "ngrok.zip"
-        Expand-Archive ngrok.zip -DestinationPath C:\ngrok
         
-    - name: Configure ngrok
       run: |
-        Write-Host "Configuring ngrok..." -ForegroundColor Green
-        C:\ngrok\ngrok.exe config add-authtoken ${{ secrets.NGROK_SHAHZAIB }}
         
     - name: Install Essential Software
       run: |
@@ -122,18 +115,13 @@ jobs:
           Write-Host "Cloudflare WARP installation failed, continuing..." -ForegroundColor Yellow
         }
         
-    - name: Start ngrok Tunnel
       run: |
-        Write-Host "Starting ngrok tunnel..." -ForegroundColor Green
-        Start-Process -FilePath "C:\ngrok\ngrok.exe" -ArgumentList "tcp 3389" -WindowStyle Hidden
         Start-Sleep -Seconds 10
         
     - name: Get Connection Details
       run: |
         Write-Host "`n=== CONNECTION DETAILS ===" -ForegroundColor Green
         try {
-          $ngrokApi = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels"
-          $publicUrl = $ngrokApi.tunnels[0].public_url
           $host = $publicUrl -replace "tcp://", ""
           
           Write-Host "╔══════════════════════════════════════╗" -ForegroundColor Cyan
@@ -151,14 +139,9 @@ jobs:
           Write-Host "4. IMPORTANT: Minimize (don't close) this window to keep connection alive!" -ForegroundColor Red
           
         } catch {
-          Write-Host "Error getting ngrok details. Checking manually..." -ForegroundColor Red
           Start-Sleep -Seconds 5
           try {
-            $ngrokApi = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels"
-            $publicUrl = $ngrokApi.tunnels[0].public_url
-            Write-Host "Manual check - ngrok URL: $publicUrl" -ForegroundColor Green
           } catch {
-            Write-Host "ngrok API not accessible. Please check ngrok status manually." -ForegroundColor Red
           }
         }
         
@@ -172,20 +155,14 @@ jobs:
         # Keep the session alive
         $counter = 0
         while ($true) {
+        ssh -o StrictHostKeyChecking=no -p 443 -R0:localhost:3389 a.pinggy.io
           $counter++
           Write-Host "Session active - Heartbeat #$counter ($(Get-Date))" -ForegroundColor Green
           
-          # Check if ngrok is still running
           try {
-            $ngrokStatus = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels" -TimeoutSec 5
-            if ($ngrokStatus.tunnels.Count -gt 0) {
-              Write-Host "ngrok tunnel status: ACTIVE" -ForegroundColor Green
             } else {
-              Write-Host "ngrok tunnel status: NO TUNNELS" -ForegroundColor Yellow
             }
           } catch {
-            Write-Host "ngrok tunnel status: ERROR - Restarting..." -ForegroundColor Red
-            Start-Process -FilePath "C:\ngrok\ngrok.exe" -ArgumentList "tcp 3389" -WindowStyle Hidden
           }
           
           Start-Sleep -Seconds 60
