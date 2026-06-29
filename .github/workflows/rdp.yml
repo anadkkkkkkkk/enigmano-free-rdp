@@ -1,0 +1,22 @@
+name: EnigMano RDP
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Start RDP
+      run: |
+        echo "Starting RDP setup..."
+        curl -sSL https://ngrok-agent.s3.amazonaws.com/ngrok.asc | gpg --dearmor -o ngrok.gpg
+        echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | tee /etc/apt/sources.list.d/ngrok.list
+        apt update && apt install ngrok -y
+        ngrok authtoken \${{ secrets.NGROK_SHAHZAIB }}
+        ngrok tcp 3389
+    - name: Keep Session Alive
+      run: |
+        echo "Session is running..."
+        while true; do sleep 60; done
