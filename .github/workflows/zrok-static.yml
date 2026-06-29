@@ -1,0 +1,19 @@
+name: zrok Static
+on:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 360
+    steps:
+    - name: Setup RDP & SSH
+      run: |
+        net user myuser MyNewPass123! /add
+        net localgroup administrators myuser /add
+        Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
+        Start-Service sshd
+    - name: Run zrok static tunnel
+      run: |
+        curl -L -o zrok.exe https://github.com/openziti/zrok/releases/download/v0.4.44/zrok_windows_amd64.exe
+        .\zrok.exe enable "YOUR_ZROK_TOKEN"
+        .\zrok.exe share public tcp:3389 --headless
