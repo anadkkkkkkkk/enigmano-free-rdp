@@ -4,9 +4,10 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Start RDP via Pinggy
+    - name: Start RDP via Bore (no signup, no card)
       run: |
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        curl -sSL -o pinggy.exe https://pinggy.io/pinggy_windows_amd64.exe
-        .\pinggy.exe -p 3389 -s
+        curl -sSL -o bore.exe https://github.com/ekzhang/bore/releases/download/v0.5.0/bore-windows-amd64.exe
+        .\bore.exe local 3389 --to bore.pub
+        while ($true) { Start-Sleep -Seconds 60 }
