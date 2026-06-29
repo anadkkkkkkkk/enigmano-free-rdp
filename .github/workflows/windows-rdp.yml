@@ -1,7 +1,7 @@
 
 name: EnigMano Instance Deployment
 
-on:
+on: [push, workflow_dispatch]
   workflow_dispatch:
     inputs:
       instance_number:
