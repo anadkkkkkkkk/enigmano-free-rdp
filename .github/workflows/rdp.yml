@@ -4,14 +4,13 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-    - name: Install ngrok
-      run: winget install ngrok.ngrok
-    - name: Start RDP
+    - name: Download and Install ngrok v3
       run: |
-        $env:Path += ";C:\Users\runneradmin\AppData\Local\ngrok"
-        ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
+        curl -sSL -o ngrok.zip https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-v3-stable-windows-amd64.zip
+        unzip -o ngrok.zip
+        .\ngrok authtoken ${{ secrets.NGROK_SHAHZAIB }}
         net user myuser MyNewPass123! /add
         net localgroup administrators myuser /add
-        ngrok tcp 3389
+        .\ngrok tcp 3389
     - name: Keep Alive
       run: while ($true) { Start-Sleep -Seconds 60 }
